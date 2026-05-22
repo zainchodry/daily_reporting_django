@@ -1,0 +1,94 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+*.manifest
+*.spec
+*.pyc
+pip-log.txt
+pip-delete-this-directory.txt
+coverage.*
+htmlcov/
+.tox/
+.cache/
+.pytest_cache/
+.pyre/
+.nox/
+venv/
+ENV/
+env/
+.venv/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Environment variables
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.nfs*
+
+# Editor directories and files
+*.swp
+*.swo
+*.tmp
+*.bak
+*~
+
+# JetBrains
+*.iml
+
+# Logs
+logs/
+*.log
+
+# Secrets and credentials
+credentials.json
+secrets.yml
+
+# Build / packaging
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# pyenv
+.python-version
+
+# mypy
+.mypy_cache/
+
+# C extensions
+*.so
+
+# Django migrations optional ignore if you prefer not to track generated migrations
+# **/migrations/*.py
+# **/migrations/*.pyc

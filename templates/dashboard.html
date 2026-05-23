@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Dashboard — Daily Reporting System{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h1>🏠 Dashboard</h1>
+  <div class="topbar-actions">
+    <span class="text-muted">{{ today|date:"l, F j, Y" }}</span>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+  {% if user.role == 'admin' or user.role == 'manager' %}
+  <div class="stat-card">
+    <div class="stat-icon purple">📋</div>
+    <div class="stat-value">{{ total_tasks|default:"0" }}</div>
+    <div class="stat-label">Total Tasks</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon orange">⏳</div>
+    <div class="stat-value">{{ pending_tasks|default:"0" }}</div>
+    <div class="stat-label">Pending Tasks</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue">🔄</div>
+    <div class="stat-value">{{ in_progress_tasks|default:"0" }}</div>
+    <div class="stat-label">In Progress</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green">✅</div>
+    <div class="stat-value">{{ completed_tasks|default:"0" }}</div>
+    <div class="stat-label">Completed Tasks</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon purple">📄</div>
+    <div class="stat-value">{{ total_reports|default:"0" }}</div>
+    <div class="stat-label">Total Reports</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon orange">📝</div>
+    <div class="stat-value">{{ pending_reports|default:"0" }}</div>
+    <div class="stat-label">Pending Review</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue">👥</div>
+    <div class="stat-value">{{ total_employees|default:"0" }}</div>
+    <div class="stat-label">Employees</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon red">🔔</div>
+    <div class="stat-value">{{ unread_notifications|default:"0" }}</div>
+    <div class="stat-label">Unread Notifications</div>
+  </div>
+  {% else %}
+  <div class="stat-card">
+    <div class="stat-icon purple">📋</div>
+    <div class="stat-value">{{ my_tasks|default:"0" }}</div>
+    <div class="stat-label">My Tasks</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon orange">⏳</div>
+    <div class="stat-value">{{ my_pending_tasks|default:"0" }}</div>
+    <div class="stat-label">Pending Tasks</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green">✅</div>
+    <div class="stat-value">{{ my_completed_tasks|default:"0" }}</div>
+    <div class="stat-label">Completed Tasks</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue">📄</div>
+    <div class="stat-value">{{ my_reports_count|default:"0" }}</div>
+    <div class="stat-label">My Reports</div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Recent Activity -->
+<div class="detail-grid">
+  <!-- Recent Tasks -->
+  <div class="glass-card">
+    <h3 class="mb-2">📋 Recent Tasks</h3>
+    {% if recent_tasks %}
+    {% for task in recent_tasks %}
+    <div class="notification-item">
+      <div>
+        <a href="{% url 'task_detail' task.pk %}"><strong>{{ task.title }}</strong></a>
+        <div class="text-muted" style="font-size:0.78rem;">
+          {% if user.role == 'admin' or user.role == 'manager' %}
+            Assigned to {{ task.assigned_to.username }} · 
+          {% endif %}
+          Due {{ task.due_date|date:"M j" }} ·
+          <span class="badge {% if task.status == 'COMPLETED' %}badge-success{% elif task.status == 'IN_PROGRESS' %}badge-info{% else %}badge-warning{% endif %}">{{ task.get_status_display }}</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state"><p>No tasks yet</p></div>
+    {% endif %}
+  </div>
+
+  <!-- Recent Reports -->
+  <div class="glass-card">
+    <h3 class="mb-2">📄 Recent Reports</h3>
+    {% if recent_reports %}
+    {% for report in recent_reports %}
+    <div class="notification-item">
+      <div>
+        <a href="{% url 'report_detail' report.pk %}"><strong>{{ report.task.title }}</strong></a>
+        <div class="text-muted" style="font-size:0.78rem;">
+          {% if user.role == 'admin' or user.role == 'manager' %}
+            By {{ report.employee.username }} · 
+          {% endif %}
+          {{ report.report_date|date:"M j" }} · {{ report.hours_worked }}h ·
+          <span class="badge {% if report.status == 'APPROVED' %}badge-success{% elif report.status == 'REJECTED' %}badge-danger{% else %}badge-warning{% endif %}">{{ report.get_status_display }}</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state"><p>No reports yet</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Daily Reporting System{% endblock %}</title>
+  <meta name="description" content="Daily Work Reporting System — Track tasks, submit reports, manage teams.">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<!-- ===== APP LAYOUT ===== -->
+<div class="sidebar-overlay"></div>
+<div class="app-wrapper">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h2>📊 DailyReport</h2>
+      <small>Work Reporting System</small>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <a href="{% url 'dashboard' %}" class="nav-link">
+          <span class="icon">🏠</span> Dashboard
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Tasks</div>
+        {% if user.role == 'admin' or user.role == 'manager' %}
+        <a href="{% url 'task_list' %}" class="nav-link">
+          <span class="icon">📋</span> All Tasks
+        </a>
+        <a href="{% url 'create_task' %}" class="nav-link">
+          <span class="icon">➕</span> Create Task
+        </a>
+        {% endif %}
+        <a href="{% url 'my_tasks' %}" class="nav-link">
+          <span class="icon">✅</span> My Tasks
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Reports</div>
+        <a href="{% url 'submit_report' %}" class="nav-link">
+          <span class="icon">📝</span> Submit Report
+        </a>
+        <a href="{% url 'my_reports' %}" class="nav-link">
+          <span class="icon">📄</span> My Reports
+        </a>
+        {% if user.role == 'admin' or user.role == 'manager' %}
+        <a href="{% url 'all_reports' %}" class="nav-link">
+          <span class="icon">📊</span> All Reports
+        </a>
+        {% endif %}
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Account</div>
+        <a href="{% url 'notifications' %}" class="nav-link">
+          <span class="icon">🔔</span> Notifications
+          {% if unread_notifications_count %}
+          <span class="nav-badge">{{ unread_notifications_count }}</span>
+          {% endif %}
+        </a>
+        <a href="{% url 'profile' %}" class="nav-link">
+          <span class="icon">👤</span> Profile
+        </a>
+        <a href="{% url 'change_password' %}" class="nav-link">
+          <span class="icon">🔒</span> Change Password
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar">
+          {{ user.username|make_list|first|upper }}
+        </div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">{{ user.get_full_name|default:user.username }}</div>
+          <div class="sidebar-user-role">{{ user.role }}</div>
+        </div>
+      </div>
+      <form method="post" action="{% url 'logout' %}" class="mt-1">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline btn-sm w-100">🚪 Logout</button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <button class="sidebar-toggle">☰</button>
+    {% block content %}{% endblock %}
+  </main>
+
+</div>
+{% else %}
+  <!-- Auth pages (no sidebar) -->
+  {% block auth_content %}{% endblock %}
+{% endif %}
+
+<!-- ===== TOAST MESSAGES ===== -->
+{% if messages %}
+<div class="toast-container" id="toastContainer">
+  {% for message in messages %}
+  <div class="toast toast-{{ message.tags|default:'info' }}">
+    <div class="toast-icon">
+      {% if message.tags == 'success' %}✓
+      {% elif message.tags == 'error' %}✕
+      {% elif message.tags == 'warning' %}⚠
+      {% else %}ℹ{% endif %}
+    </div>
+    <div class="toast-body">
+      <div class="toast-title">
+        {% if message.tags == 'success' %}Success
+        {% elif message.tags == 'error' %}Error
+        {% elif message.tags == 'warning' %}Warning
+        {% else %}Info{% endif %}
+      </div>
+      <div class="toast-message">{{ message }}</div>
+    </div>
+    <button class="toast-close" aria-label="Close">✕</button>
+    <div class="toast-progress"><div class="toast-progress-bar"></div></div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

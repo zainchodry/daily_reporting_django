@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}{{ task.title }} — Daily Reporting System{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h1>📋 Task Detail</h1>
+  <div class="topbar-actions">
+    {% if task.assigned_to == user or user.role == 'admin' or user.role == 'manager' %}
+    <a href="{% url 'update_task_status' task.pk %}" class="btn btn-primary btn-sm">Update Status</a>
+    {% endif %}
+    <a href="{% url 'task_list' %}" class="btn btn-outline btn-sm">Back</a>
+  </div>
+</div>
+
+<div class="glass-card">
+  <h2 class="mb-2">{{ task.title }}</h2>
+  <div class="detail-grid">
+    <div class="detail-item">
+      <div class="detail-label">Assigned By</div>
+      <div class="detail-value">{{ task.assigned_by.username }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Assigned To</div>
+      <div class="detail-value">{{ task.assigned_to.username }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Priority</div>
+      <div class="detail-value">
+        <span class="badge {% if task.priority == 'HIGH' %}badge-danger{% elif task.priority == 'MEDIUM' %}badge-warning{% else %}badge-info{% endif %}">{{ task.get_priority_display }}</span>
+      </div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Status</div>
+      <div class="detail-value">
+        <span class="badge {% if task.status == 'COMPLETED' %}badge-success{% elif task.status == 'IN_PROGRESS' %}badge-info{% else %}badge-warning{% endif %}">{{ task.get_status_display }}</span>
+      </div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Due Date</div>
+      <div class="detail-value">{{ task.due_date|date:"F j, Y" }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Created</div>
+      <div class="detail-value">{{ task.created_at|date:"F j, Y g:i A" }}</div>
+    </div>
+  </div>
+  <div class="detail-item mt-2">
+    <div class="detail-label">Description</div>
+    <div class="detail-value">{{ task.description|linebreaksbr }}</div>
+  </div>
+</div>
+{% endblock %}

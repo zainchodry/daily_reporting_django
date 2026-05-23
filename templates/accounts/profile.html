@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Profile — Daily Reporting System{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h1>👤 My Profile</h1>
+</div>
+
+<div class="glass-card">
+  <div class="profile-header">
+    <div class="profile-avatar">
+      {% if profile.image %}
+        <img src="{{ profile.image.url }}" alt="Avatar">
+      {% else %}
+        {{ user.username|make_list|first|upper }}
+      {% endif %}
+    </div>
+    <div>
+      <h2>{{ user.get_full_name|default:user.username }}</h2>
+      <p class="text-muted">{{ user.email }}</p>
+      <span class="badge badge-purple" style="margin-top: 0.3rem;">{{ user.role|title }}</span>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="detail-grid">
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-2">
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+      <a href="{% url 'change_password' %}" class="btn btn-outline">Change Password</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

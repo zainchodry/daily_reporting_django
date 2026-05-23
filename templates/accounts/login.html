@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Login — Daily Reporting System{% endblock %}
+
+{% block auth_content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="auth-logo">📊 DailyReport</span>
+      <h1>Welcome Back</h1>
+      <p>Sign in to your account to continue</p>
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="form-errors">
+      <ul>{% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary w-100 mt-1">Sign In</button>
+    </form>
+
+    <div class="auth-footer">
+      <p><a href="{% url 'forget_password' %}">Forgot password?</a></p>
+      <p class="mt-1">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

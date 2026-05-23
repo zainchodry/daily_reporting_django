@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{% if editing %}Edit Report{% else %}Submit Report{% endif %} — Daily Reporting System{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h1>📝 {% if editing %}Edit Report{% else %}Submit Daily Report{% endif %}</h1>
+</div>
+
+<div class="glass-card" style="max-width: 600px;">
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+      <ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <div class="d-flex gap-1 mt-2">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update Report{% else %}Submit Report{% endif %}</button>
+      <a href="{% url 'my_reports' %}" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

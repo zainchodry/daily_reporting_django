@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}All Reports — Daily Reporting System{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h1>📊 All Reports</h1>
+</div>
+
+<div class="glass-card">
+  {% if reports %}
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Task</th>
+          <th>Date</th>
+          <th>Hours</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in reports %}
+        <tr>
+          <td>{{ report.employee.username }}</td>
+          <td><strong>{{ report.task.title }}</strong></td>
+          <td>{{ report.report_date|date:"M j, Y" }}</td>
+          <td>{{ report.hours_worked }}h</td>
+          <td>
+            <span class="badge {% if report.status == 'APPROVED' %}badge-success{% elif report.status == 'REJECTED' %}badge-danger{% else %}badge-warning{% endif %}">{{ report.get_status_display }}</span>
+          </td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="{% url 'report_detail' report.pk %}" class="btn btn-outline btn-sm">View</a>
+              {% if report.status == 'SUBMITTED' %}
+              <a href="{% url 'review_report' report.pk %}" class="btn btn-primary btn-sm">Review</a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">📊</div>
+    <p>No reports submitted yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Notifications — Daily Reporting System{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h1>🔔 Notifications</h1>
+  <div class="topbar-actions">
+    <a href="{% url 'mark_all_read' %}" class="btn btn-outline btn-sm">✓ Mark All Read</a>
+  </div>
+</div>
+
+<div class="glass-card">
+  {% if notifications %}
+  {% for notif in notifications %}
+  <a href="{% url 'notification_detail' notif.pk %}" style="text-decoration:none; color:inherit;">
+    <div class="notification-item {% if notif.is_read %}read{% else %}unread{% endif %}">
+      <div class="notif-dot"></div>
+      <div style="flex:1;">
+        <strong>{{ notif.title }}</strong>
+        <div class="text-muted" style="font-size:0.78rem;">{{ notif.message|truncatewords:15 }}</div>
+        <div class="text-muted" style="font-size:0.7rem; margin-top:0.3rem;">{{ notif.created_at|timesince }} ago</div>
+      </div>
+      <span class="badge {% if notif.notification_type == 'TASK_ASSIGNED' %}badge-info{% elif notif.notification_type == 'REPORT_APPROVED' %}badge-success{% else %}badge-danger{% endif %}">
+        {{ notif.get_notification_type_display }}
+      </span>
+    </div>
+  </a>
+  {% endfor %}
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🔔</div>
+    <p>No notifications yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

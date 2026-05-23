@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Report Detail — Daily Reporting System{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h1>📄 Report Detail</h1>
+  <div class="topbar-actions">
+    {% if user.role == 'admin' or user.role == 'manager' %}
+    {% if report.status == 'SUBMITTED' %}
+    <a href="{% url 'review_report' report.pk %}" class="btn btn-primary btn-sm">Review</a>
+    {% endif %}
+    <a href="{% url 'all_reports' %}" class="btn btn-outline btn-sm">Back</a>
+    {% else %}
+    <a href="{% url 'my_reports' %}" class="btn btn-outline btn-sm">Back</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="glass-card">
+  <div class="detail-grid">
+    <div class="detail-item">
+      <div class="detail-label">Employee</div>
+      <div class="detail-value">{{ report.employee.username }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Task</div>
+      <div class="detail-value">{{ report.task.title }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Report Date</div>
+      <div class="detail-value">{{ report.report_date|date:"F j, Y" }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Hours Worked</div>
+      <div class="detail-value">{{ report.hours_worked }} hours</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Status</div>
+      <div class="detail-value">
+        <span class="badge {% if report.status == 'APPROVED' %}badge-success{% elif report.status == 'REJECTED' %}badge-danger{% else %}badge-warning{% endif %}">{{ report.get_status_display }}</span>
+      </div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Submitted</div>
+      <div class="detail-value">{{ report.created_at|date:"F j, Y g:i A" }}</div>
+    </div>
+  </div>
+
+  <div class="detail-item mt-2">
+    <div class="detail-label">Work Summary</div>
+    <div class="detail-value">{{ report.work_summary|linebreaksbr }}</div>
+  </div>
+
+  {% if report.blockers %}
+  <div class="detail-item mt-2">
+    <div class="detail-label">Blockers</div>
+    <div class="detail-value">{{ report.blockers|linebreaksbr }}</div>
+  </div>
+  {% endif %}
+
+  {% if report.manager_feedback %}
+  <div class="detail-item mt-2">
+    <div class="detail-label">Manager Feedback</div>
+    <div class="detail-value">{{ report.manager_feedback|linebreaksbr }}</div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,25 +1,31 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class User(AbstractUser):
-    Role_Choices = [
+    ROLE_CHOICES = [
         ('admin', 'Admin'),
         ('manager', 'Manager'),
         ('employee', 'Employee'),
     ]
-    role = models.CharField(max_length=20, choices=Role_Choices, default='employee')
+
+    email = models.EmailField(unique=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='employee')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
     def __str__(self):
-        return self.username
-    
+        return f"{self.get_full_name() or self.username} ({self.email})"
+
+    class Meta:
+        ordering = ['username']
+
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     phone = models.CharField(
-        max_length=12,
+        max_length=20,
         blank=True,
         null=True
     )
@@ -49,5 +55,4 @@ class Profile(models.Model):
     )
 
     def __str__(self):
-        return self.user.username
-    
+        return f"Profile of {self.user.username}"

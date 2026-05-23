@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}{{ notification.title }} — Daily Reporting System{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h1>🔔 Notification</h1>
+  <div class="topbar-actions">
+    <a href="{% url 'notifications' %}" class="btn btn-outline btn-sm">Back</a>
+  </div>
+</div>
+
+<div class="glass-card" style="max-width: 600px;">
+  <div class="d-flex align-center justify-between mb-2 flex-wrap gap-1">
+    <h2>{{ notification.title }}</h2>
+    <span class="badge {% if notification.notification_type == 'TASK_ASSIGNED' %}badge-info{% elif notification.notification_type == 'REPORT_APPROVED' %}badge-success{% else %}badge-danger{% endif %}">
+      {{ notification.get_notification_type_display }}
+    </span>
+  </div>
+
+  <p style="line-height:1.7;">{{ notification.message }}</p>
+
+  <div class="text-muted mt-2" style="font-size:0.78rem;">
+    {{ notification.created_at|date:"F j, Y g:i A" }}
+  </div>
+</div>
+{% endblock %}
